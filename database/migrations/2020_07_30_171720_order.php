@@ -16,7 +16,7 @@ class Order extends Migration
         Schema::create('order', function (Blueprint $table) {
             $table->unsignedBigInteger('client_id');
             $table->unsignedBigInteger('product_id');
-            $table->string('request_status')->default('Pendente');
+            $table->string('request_status')->default('Pending');
             $table->foreign('client_id')
                 ->references('id')->on('client');
 
