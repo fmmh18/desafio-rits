@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Model\OrderModel;
+use App\Model\ClientModel;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendMailClientOrder;
 
 class OrderController extends Controller
 {
@@ -33,6 +36,8 @@ class OrderController extends Controller
         else
         { 
             try{
+                $client = ClientModel::findOrfail($input->client_id);
+                Mail::to($client->email)->queue(new SendMailClientOrder($client));
                 return OrderModel::create($input);
             }catch (\Exception $e){
                     return $e->getCode();
@@ -66,6 +71,9 @@ class OrderController extends Controller
         }
         else
         {
+            $client = ClientModel::findOrfail($input->client_id);
+            $data = OrderModel::where('client_id',$data->id)-first();
+            Mail::to($client->email)->queue(new SendMailClientOrder($data));
              return $order->update($input); 
         }
     }
